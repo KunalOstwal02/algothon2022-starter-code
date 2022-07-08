@@ -27,7 +27,6 @@ def getMyPosition(prcSoFar):
     pricesFile = "./prices.txt"
     prcAll = loadPrices(pricesFile)  # data stored in prcAll
 
-
     #-------------------------------------------------------------for the dates
     def daterange(start_date, end_date):
         for n in range(int((end_date - start_date).days)):
@@ -40,7 +39,6 @@ def getMyPosition(prcSoFar):
     #--------------------------------------------------------------
 
     dicDates = pd.DataFrame(dates)      #this section is making the dataframe of 1 stock
-    print(dicDates)
     d = dict(enumerate(prcAll[0].flatten(), 1))
     df = pd.DataFrame(d, index=['ds','y'])
     df = df.transpose()
@@ -48,16 +46,22 @@ def getMyPosition(prcSoFar):
 
 
     df_train = df
-    df_train = df_train.rename(columns={"Date": "ds", "Close": "y"})
+    df_train = df_train.rename(columns={"Date": "y", "Close": "ds"})
+
+    print(df_train)
 
     m = Prophet()
     m.fit(df_train)                     #now i have to compile results
-    future = m.make_future_dataframe(periods=250)       #this line and below needs finetuning, this library is
-                                                        #meant to be good for predicting stuff tho
+    future = m.make_future_dataframe(periods=1)
     forecast = m.predict(future)
 
-    a = forecast
+    pd.set_option("display.max_rows", None, "display.max_columns", None)
+
+    print(forecast)
+    a = forecast['yhat']
+    b = prcAll[0]
     plt.plot(a)
+    plt.plot(b)
     plt.grid()
     plt.show()
 
