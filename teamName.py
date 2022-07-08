@@ -60,8 +60,12 @@ def getMyPosition(prcSoFar):
     print(forecast)
     a = forecast['yhat']
     b = prcAll[0]
-    plt.plot(a)
-    plt.plot(b)
+    plt.plot(a, label = 'Forecasted')
+    plt.plot(b, label = 'Actual')
+    plt.legend()
+    plt.title("Stock Price")
+    plt.xlabel("Days")
+    plt.ylabel("Price")
     plt.grid()
     plt.show()
 
