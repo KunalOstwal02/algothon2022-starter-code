@@ -1,4 +1,3 @@
-import streamlit as st
 import numpy as np
 import pandas as pd
 from datetime import date, timedelta
@@ -38,36 +37,39 @@ def getMyPosition(prcSoFar):
         dates.append(single_date.strftime("%Y-%m-%d"))
     #--------------------------------------------------------------
 
-    dicDates = pd.DataFrame(dates)      #this section is making the dataframe of 1 stock
-    d = dict(enumerate(prcAll[0].flatten(), 1))
-    df = pd.DataFrame(d, index=['ds','y'])
-    df = df.transpose()
-    df['ds'] = dicDates                 #adding the dates column in for .fit() requirements
+    def predict(i):
+        dicDates = pd.DataFrame(dates)      #this section is making the dataframe of 1 stock
+        d = dict(enumerate(prcAll[0].flatten(), 1))
+        df = pd.DataFrame(d, index=['ds','y'])
+        df = df.transpose()
+        df['ds'] = dicDates                 #adding the dates column in for .fit() requirements
 
 
-    df_train = df
-    df_train = df_train.rename(columns={"Date": "y", "Close": "ds"})
+        df_train = df
+        df_train = df_train.rename(columns={"Date": "y", "Close": "ds"})
 
-    print(df_train)
+        m = Prophet()
+        m.fit(df_train)                     #now i have to compile results
+        future = m.make_future_dataframe(periods=1)
+        forecast = m.predict(future)
+        #pd.set_option("display.max_rows", None, "display.max_columns", None) #displays whole table in console
+        return forecast['yhat']
 
-    m = Prophet()
-    m.fit(df_train)                     #now i have to compile results
-    future = m.make_future_dataframe(periods=1)
-    forecast = m.predict(future)
+    predictions = []
+    for i in prcAll:
+        predictions.append(predict(i))
 
-    pd.set_option("display.max_rows", None, "display.max_columns", None)
-
-    print(forecast)
-    a = forecast['yhat']
-    b = prcAll[0]
-    plt.plot(a, label = 'Forecasted')
-    plt.plot(b, label = 'Actual')
-    plt.legend()
-    plt.title("Stock Price")
-    plt.xlabel("Days")
-    plt.ylabel("Price")
-    plt.grid()
-    plt.show()
+    print(len(predictions))
+    # a = forecast['yhat']
+    # b = prcAll[0]
+    # plt.plot(a, label = 'Forecasted')
+    # plt.plot(b, label = 'Actual')
+    # plt.legend()
+    # plt.title("Stock Price")
+    # plt.xlabel("Days")
+    # plt.ylabel("Price")
+    # plt.grid()
+    # plt.show()
 
     return currentPos
 
