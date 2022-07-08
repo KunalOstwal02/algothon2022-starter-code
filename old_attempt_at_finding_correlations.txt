@@ -1,0 +1,87 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sn
+
+
+nInst = 100
+currentPos = np.zeros(nInst)
+
+def correlations(array):
+    #take the dataframe, use for loops to check each stock against every other stock
+    for j in range(0,100):
+        jDf = pd.DataFrame(array[j])
+        for i in range(0,100):
+            iDf = pd.DataFrame(array[i])
+            join = pd.concat([jDf, iDf], axis=1, join='inner')
+            results = join.corr(method='spearman')
+            print(results)
+
+
+
+
+def getMyPosition(prcSoFar):
+    global currentPos
+
+    def loadPrices(fn):  # grabs prices from prices.txt
+        global nt, nInst
+        df = pd.read_csv(fn, sep='\s+', header=None, index_col=None)
+        nt, nInst = df.values.shape
+        return (df.values).T
+
+    pricesFile = "./prices.txt"
+    prcAll = loadPrices(pricesFile)  # data stored in prcAll
+
+    pChange = np.empty([100, 250], dtype=float)
+
+    for j in range(0, 100):
+        for i in range(1, 250):
+            temp1 = prcAll[j][i - 1]
+            temp2 = prcAll[j][i]
+            pChange[j][i] = temp2 / temp1
+
+
+    correlations(pChange)
+
+    #    df = pd.DataFrame(pChange)
+    # df = df.corr(method='pearson')
+    # mask = np.zeros_like(df)
+    # mask[np.triu_indices_from(mask)] = True
+    # # generate plot
+    # sn.heatmap(df, cmap='RdYlGn', vmax=1.0, vmin=-1.0, mask=mask, linewidths=2.5)
+    # plt.yticks(rotation=0)
+    # plt.xticks(rotation=90)
+    # plt.show()
+
+
+    # # Create correlation matrix
+    # corr_matrix = df.corr().abs()
+    #
+    # # Select upper triangle of correlation matrix
+    # upper = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(np.bool))
+    #
+    # # Find features with correlation greater than 0.95
+    # to_keep = [column for column in upper.columns if any(upper[column] > 0.5)]
+    #
+    # # keep features
+    # print(to_keep)
+
+
+
+
+    # need to find fair value based on past stock prices
+
+    # need to make trades based on that fair value
+
+    # update currentPos
+
+    return currentPos
+
+# graphs
+# a = prcAll[20]
+# plt.plot(a)
+# plt.grid()
+# plt.show()
+
+    # df = pd.DataFrame(pChange)
+    # print(df)
