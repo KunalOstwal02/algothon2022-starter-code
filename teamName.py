@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import time
 from datetime import date, timedelta
 import matplotlib.pyplot as plt
 
@@ -9,9 +10,8 @@ from plotly import graph_objs as go
 
 nInst = 100
 currentPos = np.zeros(nInst)
+tStart = time.time()
 
-START = "2015-01-01"
-TODAY = date.today().strftime("%Y-%m-%d")
 
 
 def getMyPosition(prcSoFar):
@@ -37,39 +37,64 @@ def getMyPosition(prcSoFar):
         dates.append(single_date.strftime("%Y-%m-%d"))
     #--------------------------------------------------------------
 
-    def predict(i):
-        dicDates = pd.DataFrame(dates)      #this section is making the dataframe of 1 stock
-        d = dict(enumerate(prcAll[0].flatten(), 1))
-        df = pd.DataFrame(d, index=['ds','y'])
-        df = df.transpose()
-        df['ds'] = dicDates                 #adding the dates column in for .fit() requirements
+    #                   THE COMMENTED SECTION BELOW RUNS EVERY STOCK PREDICTION, TAKES TOO LONG TO RUN IT REPEATEDLY
+    # def predict(i):
+    #     dicDates = pd.DataFrame(dates)      #this section is making the dataframe of 1 stock
+    #     d = dict(enumerate(prcAll[i].flatten(), 1))
+    #     df = pd.DataFrame(d, index=['ds','y'])
+    #     df = df.transpose()
+    #     df['ds'] = dicDates                 #adding the dates column in for .fit() requirements
+    #
+    #
+    #     df_train = df
+    #     df_train = df_train.rename(columns={"Date": "y", "Close": "ds"})
+    #
+    #     m = Prophet()
+    #     m.fit(df_train)                     #now i have to compile results
+    #     future = m.make_future_dataframe(periods=1)
+    #     forecast = m.predict(future)
+    #     #pd.set_option("display.max_rows", None, "display.max_columns", None) #displays whole table in console
+    #     return forecast['yhat']
+    #
+    # predictions = []
+    # for i in range(0,len(prcAll)):
+    #     predictions.append(predict(i))
+
+          # CODE TO RUN ONE PREDICTION
+    dicDates = pd.DataFrame(dates)  # this section is making the dataframe of 1 stock
+    d = dict(enumerate(prcAll[1].flatten(), 1))         #change the indicie in prcAll[] for every stock indicie
+    df = pd.DataFrame(d, index=['ds','y'])
+    df = df.transpose()
+    df['ds'] = dicDates                 #adding the dates column in for .fit() requirements
 
 
-        df_train = df
-        df_train = df_train.rename(columns={"Date": "y", "Close": "ds"})
+    df_train = df
+    df_train = df_train.rename(columns={"Date": "y", "Close": "ds"})
 
-        m = Prophet()
-        m.fit(df_train)                     #now i have to compile results
-        future = m.make_future_dataframe(periods=1)
-        forecast = m.predict(future)
-        #pd.set_option("display.max_rows", None, "display.max_columns", None) #displays whole table in console
-        return forecast['yhat']
+    m = Prophet()
+    m.fit(df_train)                     #now i have to compile results
+    future = m.make_future_dataframe(periods=1)
+    forecast = m.predict(future)    #the prediction, im looking at 'yhat'
+    #pd.set_option("display.max_rows", None, "display.max_columns", None) #displays whole table in console
 
-    predictions = []
-    for i in prcAll:
-        predictions.append(predict(i))
 
-    print(len(predictions))
-    # a = forecast['yhat']
-    # b = prcAll[0]
-    # plt.plot(a, label = 'Forecasted')
-    # plt.plot(b, label = 'Actual')
-    # plt.legend()
-    # plt.title("Stock Price")
-    # plt.xlabel("Days")
-    # plt.ylabel("Price")
-    # plt.grid()
-    # plt.show()
+
+
+    a = forecast['yhat']    #prediction
+    b = prcAll[1]           #stock indicie
+    plt.plot(a, label = 'Forecasted')
+    plt.plot(b, label = 'Actual')
+    plt.legend()
+    plt.title("Stock Price")
+    plt.xlabel("Days")
+    plt.ylabel("Price")
+    plt.grid()
+    plt.show()
+
+
+    tEnd = time.time()
+    tRun = tEnd - tStart
+    print("runTime  : %.3lf " % tRun)
 
     return currentPos
 
