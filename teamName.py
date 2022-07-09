@@ -11,12 +11,12 @@ from plotly import graph_objs as go
 nInst = 100
 currentPos = np.zeros(nInst)
 tStart = time.time()
-
+profit = 0
 
 
 def getMyPosition(prcSoFar):
     global currentPos
-
+    global profit
     def loadPrices(fn):  # grabs prices from prices.txt
         global nt, nInst
         df = pd.read_csv(fn, sep='\s+', header=None, index_col=None)
@@ -60,9 +60,9 @@ def getMyPosition(prcSoFar):
     # for i in range(0,len(prcAll)):
     #     predictions.append(predict(i))
 
-          # CODE TO RUN ONE PREDICTION
+          ## CODE TO RUN ONE PREDICTION
     dicDates = pd.DataFrame(dates)  # this section is making the dataframe of 1 stock
-    d = dict(enumerate(prcAll[1].flatten(), 1))         #change the indicie in prcAll[] for every stock indicie
+    d = dict(enumerate(prcSoFar[1].flatten(), 1))         #change the indicie in prcAll[] for every stock indicie
     df = pd.DataFrame(d, index=['ds','y'])
     df = df.transpose()
     df['ds'] = dicDates                 #adding the dates column in for .fit() requirements
@@ -81,20 +81,39 @@ def getMyPosition(prcSoFar):
 
 
     a = forecast['yhat']    #prediction
-    b = prcAll[1]           #stock indicie
-    plt.plot(a, label = 'Forecasted')
-    plt.plot(b, label = 'Actual')
-    plt.legend()
-    plt.title("Stock Price")
-    plt.xlabel("Days")
-    plt.ylabel("Price")
-    plt.grid()
-    plt.show()
+    b = pd.DataFrame(prcSoFar[1])           #stock indices
+
+    # print last forecast
+
+    print(f"forecast: {a.iloc[-1]}")
+    print(f"current price: {b.iloc[-1][0]}")
+
+    # if forecast is better than current price, buy
+    if a.iloc[-1] > b.iloc[-1][0]:
+        print("BUY")
+        currentPos[1] += 10000/b.iloc[-1][0]
+        
+    else:
+        print("SELL")
+        if (currentPos[1] > 10000/b.iloc[-1][0]):
+            currentPos[1] -= 10000/b.iloc[-1][0]
+        else:
+            currentPos[1] = 0
+    print(f"current position: {currentPos[1]}")
+
+    # plt.plot(a, label = 'Forecasted')
+    # plt.plot(b, label = 'Actual')
+    # plt.legend()
+    # plt.title("Stock Price")
+    # plt.xlabel("Days")
+    # plt.ylabel("Price")
+    # plt.grid()
+    # plt.show()
 
 
     tEnd = time.time()
     tRun = tEnd - tStart
-    print("runTime  : %.3lf " % tRun)
+    # print("runTime  : %.3lf " % tRun)
 
     return currentPos
 
