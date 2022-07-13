@@ -62,7 +62,7 @@ def getMyPosition(prcSoFar):
 
           # CODE TO RUN ONE PREDICTION
     dicDates = pd.DataFrame(dates)  # this section is making the dataframe of 1 stock
-    d = dict(enumerate(prcAll[1].flatten(), 1))         #change the indicie in prcAll[] for every stock indicie
+    d = dict(enumerate(prcAll[0].flatten(), 1))         #change the indicie in prcAll[] for every stock indicie
     df = pd.DataFrame(d, index=['ds','y'])
     df = df.transpose()
     df['ds'] = dicDates                 #adding the dates column in for .fit() requirements
@@ -79,17 +79,49 @@ def getMyPosition(prcSoFar):
 
 
 
-
     a = forecast['yhat']    #prediction
-    b = prcAll[1]           #stock indicie
-    plt.plot(a, label = 'Forecasted')
-    plt.plot(b, label = 'Actual')
-    plt.legend()
-    plt.title("Stock Price")
-    plt.xlabel("Days")
-    plt.ylabel("Price")
-    plt.grid()
-    plt.show()
+    b = pd.DataFrame(prcAll[0])           #stock indices
+
+
+    #find gradient of last 5 days.
+    temp = []
+    for i in range(0,len(prcAll),5):
+        temp.append(a[i])
+
+    g = np.gradient(temp)
+    #if gradient[i] and gradient [i-1]>0, buy, and vice versa
+
+    #.iloc[row][column?]
+    totalCashSpent = 0
+    for i in range(0,len(g)):
+        if i>0:
+            if g[i] > 0 and g[i-1]>0:
+                print('buy ')
+                currentPos[0] += 500/b.iloc[i*5][0]
+                totalCashSpent += 500
+            if g[i] < 0 and g[i-1]<0:
+                print('sell ')
+                currentPos[1] -= 500 / b.iloc[i*5][0]
+                totalCashSpent += 500
+
+    revenue = currentPos[0] * b.iloc[-1][0]
+    print("Position: $"+str(revenue))
+    print('Minus original stake: $'+str(totalCashSpent))
+    print('Profit/Loss: $'+str(revenue-totalCashSpent))
+
+
+
+
+
+    # b = prcAll[0]           #stock indicie
+    # plt.plot(a, label = 'Forecasted')
+    # plt.plot(b, label = 'Actual')
+    # plt.legend()
+    # plt.title("Stock Price")
+    # plt.xlabel("Days")
+    # plt.ylabel("Price")
+    # plt.grid()
+    # plt.show()
 
 
     tEnd = time.time()
