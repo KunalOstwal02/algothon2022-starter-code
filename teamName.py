@@ -67,6 +67,7 @@ def getMyPosition(prcSoFar):
     df = df.transpose()
     df['ds'] = dicDates                 #adding the dates column in for .fit() requirements
 
+    b = pd.DataFrame(prcAll[0])           #for predictions xxxxxxx
 
     df_train = df
     df_train = df_train.rename(columns={"Date": "y", "Close": "ds"})
@@ -80,7 +81,7 @@ def getMyPosition(prcSoFar):
 
 
     a = forecast['yhat']    #prediction
-    b = pd.DataFrame(prcAll[0])           #stock indices
+    #print(b.iloc[0][0])
 
 
     #find gradient of last 5 days.
@@ -89,6 +90,7 @@ def getMyPosition(prcSoFar):
         temp.append(a[i])
 
     g = np.gradient(temp)
+    print(g)
     #if gradient[i] and gradient [i-1]>0, buy, and vice versa
 
     #.iloc[row][column?]
@@ -101,11 +103,11 @@ def getMyPosition(prcSoFar):
                 currentPos[0] += 500/b.iloc[i*5][0]
                 totalCashSpent += 500
                 totalTrades += 1
-            if g[i] < 0 and g[i-1]<0:
-                print('sell ')
-                currentPos[1] -= 500 / b.iloc[i*5][0]
-                totalCashSpent += 500
-                totalTrades += 1
+            # if g[i] < 0 and g[i-1]<0:
+            #     print('sell ')
+            #     currentPos[1] -= 500 / b.iloc[i*5][0]
+            #     totalCashSpent += 500
+            #     totalTrades += 1
 
 
     revenue = currentPos[0] * b.iloc[-1][0]
@@ -119,15 +121,15 @@ def getMyPosition(prcSoFar):
 
 
 
-    # b = prcAll[0]           #stock indicie
-    # plt.plot(a, label = 'Forecasted')
-    # plt.plot(b, label = 'Actual')
-    # plt.legend()
-    # plt.title("Stock Price")
-    # plt.xlabel("Days")
-    # plt.ylabel("Price")
-    # plt.grid()
-    # plt.show()
+    b = prcAll[2]           #stock indicie
+    plt.plot(a, label = 'Forecasted')
+    plt.plot(b, label = 'Actual')
+    plt.legend()
+    plt.title("Stock Price")
+    plt.xlabel("Days")
+    plt.ylabel("Price")
+    plt.grid()
+    #plt.show()
 
 
     tEnd = time.time()
