@@ -67,7 +67,7 @@ def getMyPosition(prcSoFar):
     df = df.transpose()
     df['ds'] = dicDates                 #adding the dates column in for .fit() requirements
 
-    b = pd.DataFrame(prcAll[98])           #for predictions xxxxxxx
+    b = pd.DataFrame(prcAll[87])           #for predictions xxxxxxx
 
     df_train = df
     df_train = df_train.rename(columns={"Date": "y", "Close": "ds"})
@@ -117,11 +117,7 @@ def getMyPosition(prcSoFar):
     print('P/L %: '+str((100*(revenue-totalCashSpent)/totalCashSpent)))
     print('Total Trades: '+str(totalTrades))
 
-
-
-
-
-    b = prcAll[2]           #stock indicie
+    b = prcAll[87]           #stock indicie
     plt.plot(a, label = 'Forecasted')
     plt.plot(b, label = 'Actual')
     plt.legend()
@@ -130,7 +126,6 @@ def getMyPosition(prcSoFar):
     plt.ylabel("Price")
     plt.grid()
     # plt.show()
-
 
     tEnd = time.time()
     tRun = tEnd - tStart
