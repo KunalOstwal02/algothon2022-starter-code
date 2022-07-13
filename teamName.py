@@ -129,7 +129,7 @@ def getMyPosition(prcSoFar):
     plt.xlabel("Days")
     plt.ylabel("Price")
     plt.grid()
-    #plt.show()
+    # plt.show()
 
 
     tEnd = time.time()
