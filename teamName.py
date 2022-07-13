@@ -93,21 +93,27 @@ def getMyPosition(prcSoFar):
 
     #.iloc[row][column?]
     totalCashSpent = 0
+    totalTrades = 0
     for i in range(0,len(g)):
         if i>0:
             if g[i] > 0 and g[i-1]>0:
                 print('buy ')
                 currentPos[0] += 500/b.iloc[i*5][0]
                 totalCashSpent += 500
+                totalTrades += 1
             if g[i] < 0 and g[i-1]<0:
                 print('sell ')
                 currentPos[1] -= 500 / b.iloc[i*5][0]
                 totalCashSpent += 500
+                totalTrades += 1
+
 
     revenue = currentPos[0] * b.iloc[-1][0]
     print("Position: $"+str(revenue))
     print('Minus original stake: $'+str(totalCashSpent))
     print('Profit/Loss: $'+str(revenue-totalCashSpent))
+    print('P/L %: '+str((100*(revenue-totalCashSpent)/totalCashSpent)))
+    print('Total Trades: '+str(totalTrades))
 
 
 
