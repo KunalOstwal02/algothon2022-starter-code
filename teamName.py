@@ -67,7 +67,7 @@ def getMyPosition(prcSoFar):
     df = df.transpose()
     df['ds'] = dicDates                 #adding the dates column in for .fit() requirements
 
-    b = pd.DataFrame(prcAll[0])           #for predictions xxxxxxx
+    b = pd.DataFrame(prcAll[98])           #for predictions xxxxxxx
 
     df_train = df
     df_train = df_train.rename(columns={"Date": "y", "Close": "ds"})
@@ -96,7 +96,7 @@ def getMyPosition(prcSoFar):
     #.iloc[row][column?]
     totalCashSpent = 0
     totalTrades = 0
-    for i in range(0,len(g)):
+    for i in range(0, len(g)):
         if i>0:
             if g[i] > 0 and g[i-1]>0:
                 print('buy ')

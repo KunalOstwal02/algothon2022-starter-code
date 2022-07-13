@@ -96,6 +96,4 @@ getPosition(prcHistSoFar)       #delete this
 # print ("totDvolume: %.0lf " % dvol)
 # print ("runTime  : %.3lf " % tRun)
 
-
-
-
+    
